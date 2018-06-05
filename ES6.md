@@ -1,6 +1,6 @@
-### es6
+## es6
 
-####字符串和正则表达式
+###字符串和正则表达式
 
 #####codePointAt()方法
 
@@ -84,5 +84,56 @@ repeat()方法，其接受一个number类型的参数，表示该字符串重复
 console.log("www".repeat(3)); //wwwwwwwww
 ```
 
+##### 其他正则表达式语法变更
 
+正则表达式y修饰
 
+##### 正则表达式复制
+
+```
+var re1 = /ab/i;
+re2 = new RegExp(re1,"g");
+console.log(re2)
+```
+
+```
+var re1 = /ab/i;
+re2 = new RegExp(re1,"g");
+console.log(re2.toString());	// /ab/g
+console.log(re1.toString());	// /ab/i
+```
+
+##### flags属性
+
+```
+let re = /ab/i;
+console.log(re.source)	//"ab"
+console.log(re.flags)	//g
+```
+
+##### 模板字面量``
+
+##### 多行字符串 \
+
+```
+var msg = "this \
+String";
+console.log(msg)	//this String
+```
+
+```
+var msg = "this \n\
+String";
+console.log(msg)	// this 
+					//String
+```
+
+##### 字符串占位符${}
+
+```
+let name = "lisi";
+message = `hello , ${name}`
+console.log(message)	//hello , lisi
+```
+
+### 函数
