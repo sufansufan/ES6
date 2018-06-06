@@ -137,3 +137,115 @@ console.log(message)	//hello , lisi
 ```
 
 ### 函数
+
+#### ES5中的默认参数
+
+```
+function mark(url, timeout, callback){
+  timeout = time || 2000;
+  callback = callbaxk ||function(){};
+}
+```
+
+```
+function(url, timeout, callback){
+  timeout = (typeof timeout !== "undefined") ? timeout : 2000;
+  callback = (typeof callback !== "undefined") ? timeout : function(){};
+}
+```
+
+#### ES6中的默认参数
+
+```
+function mark(url, timeout = 2000, callback = function(){}){
+  
+}
+```
+
+#### 默认参数对arguments(参数)对象的影响
+
+```
+function mixArgs(first, second){
+  
+}
+```
+
+#### 处理无名参数
+
+##### ES5中的无名参数
+
+##### ES6中添加不定参数
+
+```
+let result = Object.create(null)	//声明一个空对象
+let result = new Object		//声明一个空对象
+function(object, ...keys){
+  
+}
+```
+
+##### 不定参数的限制
+
+不定参数有两条限制
+
+1.每一个函数只能声明一个不定参数
+
+2.而且要放在所有参数的末尾
+
+##### 不定参数对arguments的影响
+
+```
+function pick(...keys){
+	console.log(keys.length);
+	console.log(arguments.length);
+    console.log(keys[0], arguments[0]);
+    console.log(keys[1], arguments[1]);
+
+}
+pick('a','b')
+
+2
+2
+a a
+b b
+```
+
+#### 增强的 Function构造函数
+
+```
+var add = new function("first", "second = first", "return first + second")
+console.log(add(1,1));	//2
+console.log(add(1));	//2
+```
+
+#### 展开运算符(...)
+
+##### ES5中取较大的数
+
+```
+let values = [25, 50, 75, 100];
+console.log(Math.max.apply(Math,values));
+```
+
+##### ES6中取最大的数
+
+```
+let values = [25, 50, 75, 100];
+console.log(Math.max(...values));
+```
+
+#### name属性
+
+ES6中函数的name属性都有一个合适的值
+
+```
+function doSomething(){
+  
+}
+var doAnotherSthing(){
+  
+}
+console.log(doSomething.name);	//doSomething
+console.log(doAnotherSthings.name);	//doAnotherSthing
+```
+
