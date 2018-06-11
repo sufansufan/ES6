@@ -249,3 +249,233 @@ console.log(doSomething.name);	//doSomething
 console.log(doAnotherSthings.name);	//doAnotherSthing
 ```
 
+#### 明确函数的多重用途
+
+#### 元属性（metaproperty）new.target
+
+为了解决判断函数是否是通过new的关键字调用的问题，ES6中引入new.target这个元属性，元属性指非对象的属性
+
+```
+function Person(name){
+  if(typeof new.target !== "undefined"){
+    this.name = name;
+  }else{
+    throw new Error("必须通过new关键字进行调用Person")
+  }
+}
+var person = new Person('lisi')
+var notAPerson = Person.call(person,'lisi')
+```
+
+#### 块级函数
+
+```
+if(true){
+  console.log(typeof doSomething);
+  function doSomething(){
+    //空函数
+  }
+}
+```
+
+在es5中代码会抛出错误，在es6中会将doSomething()是做一个块级声明，从而可以定义该函数的代码块内访问和调用它
+
+##### 块级函数的使用场景
+
+块级函数与let函数表达式类似，一旦执行过程流出代码块，函数 定义立即被移除。二者的区别是，在代码块中，块级函数会被提升至块的顶部，而用let定义的函数表达式不会被提升
+
+```
+if(true){
+  console.log(typeof doSomething);	//此时会抛出错误
+  let doSomething = function (){
+    //空函数
+  }
+  doSomething()  
+}
+console.log(typeof doSomething);
+```
+
+##### 严格模式
+
+```
+"use strict"
+```
+
+#### 箭头函数
+
+- 没有this 、super、argument、new.target绑定，箭头函数中的this、surper、arguments及new.target这些值由外围最近一层非箭头函数 决定
+- 不能通过new关键字进行调用  箭头函数没有[[Construct]]方法，所以不能用作为构造函数，如果new关键字调用箭头函数，程序会抛出错误
+- 没有原型 由于不可以通过new关键字调用箭头函数，因而没有构建原型的需求所以箭头函数不存在prototype这个属性。
+- 不可以改变this的绑定 函数内部的this值不可以改变，在函数的生命周期始终保持一致。
+- 不支持arguments对象 箭头函数没有arguments绑定，所以你必须命名参数和不定参数这两种形式访问函数的 参数。
+- 不支持重复命名参数  无论在严格韩式非严格模式下，都不支持重复命名参数；而在传统函数的规定中，只有严格的模式下才不能有重复命名参数。
+
+
+##### 箭头函数语法
+
+```
+let reflect = value => value
+let reflect = function (value) {
+  return value;
+}
+```
+
+```
+let sum = (num1, num2) => num1 + num2;
+let sum = function (num1, num2) {
+  return num1 + num2;
+}
+```
+
+```
+let getName = () => "lisi";
+let getName = function () {
+  return 'lisi';
+}
+```
+
+```
+let sum = (num1, num2) => {
+  return num1 + num2
+}
+let sum = function (num1,num2){
+  return num1 + num2;
+}
+```
+
+创建一个空函数
+
+```
+let doNoThing = () => {};
+let doNoThing = function (){};
+```
+
+```
+let getTempItem = id => ({ id: id, name: "Temp"})
+let getTempItem = function(id) {
+  return {
+    id: id,
+    name: Temp,
+  }
+}
+```
+
+#### 创建立即执行函数表达式
+
+javascript函数是一个流行的使用方式是创建立即执行函数表达式，你可以定义一个匿名函数立即调用，自始至终不保存对函数的 引用。当你想创建一个与程序隔离的作用域时，这种模式非常方便
+
+```
+let person = function(name) {
+  return {
+    getName: function(){
+      return name；
+    }
+  }
+}('lisi');
+console.log(person.getName());	//lisi
+
+let person = ((name) => {
+  return {
+    getName: function(){
+      return name；
+    }
+  }
+})('lisi');
+console.log(person.getName());	//lisi
+```
+
+##### 箭头函数中没有this
+
+```
+let pageHander = {
+	id: '1234'，
+	init: function(){
+		document.addEventListener("click", function(){
+			this.doSomething(event.type);
+		},false)
+	},
+	doSomething: function(type){
+		console.log("handing" + type + "for" + this.id);
+	}
+}
+```
+
+因为this绑定的是事件目标对象的引用（在这段代码中引用的是document）而没有绑定pageHander，且且由于this.doSomething()中不存在，所以无法正常执行，尝试运行这段代码会抛出错误
+
+```
+let pageHander = {
+	id: '1234'，
+	init: function(){
+		document.addEventListener("click", (function(event){
+			this.doSomething(event.type);
+		}).bind(this),false)
+	},
+	doSomething: function(type){
+		console.log("handing" + type + "for" + this.id);
+	}
+}
+```
+
+它的this被绑定到当前的this也就是pageHander。事实上是创建了一个函数。
+
+```
+let pageHander = {
+	id: '1234'，
+	init: function(){
+		document.addEventListener("click", event => this.doSomething(event.type),false)
+	},
+	doSomething: function(type){
+		console.log("handing" + type + "for" + this.id);
+	}
+}
+```
+
+同样，箭头函数中的this取决于该函数外部非箭头函数的 this值，且不能通过call()、apply()或者bind()方法改变this的值。
+
+##### 箭头函数和数组
+
+```
+var result = values.sort(function(a, b){
+  return a-b;
+})
+var result = values.sort((a,b) => a - b)
+```
+
+##### 箭头函数的辨别
+
+```
+var sum = (num1, num2) => num1 + num2;
+console.log(sum.call(null, 1, 2));
+console.log(sum.apply(null, [1, 2]));
+var boundSum = sum.bind(null, 1, 2);
+console.log(boundSum())
+```
+
+通过条用call()、apply()、bind()方法。但与其他函数不同的是，箭头函数this值不会受这些方法影响。
+
+##### 尾调用优化
+
+ES6中关于函数最有趣的变化是尾调用系统引擎优化，尾调用指的是函数作为另一个函数的最后一条语句被调用，
+
+```
+function doSomething() {
+  return doSomethingElse();
+}
+```
+
+- 尾调用不访问当前栈的 变量（也就是说函数不是一个闭包）
+- 在函数内部，尾调用是最后一条语句。
+- 尾调用的结构作为函数值返回。
+
+##### 如何利用尾调用（递归函数是主要应用场景）
+
+```
+function factorial(n) {
+  if(n <= 1){
+    return 1;
+  }else{
+    return n*factorial(n-1);
+  }
+}
+```
+
